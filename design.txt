@@ -1,0 +1,16 @@
+Disc golf manegment system
+
+
+player (bag, skills, id, name, score, level)
+
+disks (weigth, speed, glide, turn, fade, price, classification, average_range beginner, avregae_range,advanced, average_range pro)
+
+competition (participants, level, course, date, wheater,)
+
+course (holes, distance, par, record)
+
+hole (distance, pair, record)
+
+
+
+https://www.latitude64.se/disc-golf-products/golf-discs/fairway-drivers/river/

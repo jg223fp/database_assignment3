@@ -4,8 +4,14 @@ Disc golf manegment system
 https://www.latitude64.se/disc-golf-products/golf-discs/fairway-drivers/river/
 
 querys:
-- what is the most used disk by this nationality this year?
-- which midrange discs can be thrown over 50 meter by a beginner?
-- Which competitions did this player compete in during this year?
-- Most owned disc but least used in competitions?
-- Longest hole of all discgolf courses?
+- what is the most used disk in compettitions by this nationality this year?             (multirelational)
+- which midrange discs can be thrown over 50 meter by a beginner?   (multi relational)
+- Classification of the disc most used at tee-padd on slottskogen course  (multirelational) 
+- Which competitions did this player compete in during this year?    (multirelational)
+- Most owned disc                                                  (multirelational)            
+- Longest hole on each discgolf course?                        (grouping & aggregation)  group by course  max(distance)
+
+
+JOIN bag.disc_name AND disc.name WHERE bag.owner_id = 1007          (JOIN)
+
+

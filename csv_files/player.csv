@@ -1,8 +1,8 @@
-﻿id;name;level;nationality;discs
-1001;Alex Smith;pro;USA;river,keystone,pure,explorer
-1002;John glenn;pro;USA;knigth,cutlass,compass,pain
-1003;Mia venetto;advanced;Italy;Explorer,River, pure,gauntlet,fuse
-1004;Daniel Ekstrom;advanced;Sweden;river,compass,fuse,explorer,cutlass,knigth,gauntlet,keystone,pure,pain
-1005;Johan Gustafsson;beginner;sweden;river,compass,keystone
-1006;Max Pettersson;ádvanced;sweden;river,compass,cutlass,pure
-1007;Linus Carlsson;Pro;swedden;river,compass,fuse,explorer,cutlass,knigth,gauntlet,keystone,pure,pain
+﻿id;name;level;nationality
+1001;Alex Smith;pro;USA
+1002;John Longarm;pro;USA
+1003;Mia Venetto;advanced;Italy
+1004;Daniel Ekstrom;advanced;Sweden
+1005;Johan Gustafsson;beginner;sweden
+1006;Max Pettersson;ádvanced;sweden
+1007;Linus Carlsson;Pro;sweden

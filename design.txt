@@ -1,16 +1,11 @@
 Disc golf manegment system
 
 
-player (bag, skills, id, name, score, level)
-
-disks (weigth, speed, glide, turn, fade, price, classification, average_range beginner, avregae_range,advanced, average_range pro)
-
-competition (participants, level, course, date, wheater,)
-
-course (holes, distance, par, record)
-
-hole (distance, pair, record)
-
-
-
 https://www.latitude64.se/disc-golf-products/golf-discs/fairway-drivers/river/
+
+querys:
+- what is the most used disk by this nationality this year?
+- which midrange discs can be thrown over 50 meter by a beginner?
+- Which competitions did this player compete in during this year?
+- Most owned disc but least used in competitions?
+- Longest hole of all discgolf courses?

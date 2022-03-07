@@ -49,7 +49,7 @@ def createPlayersTable(cursor):
                  "  `id` varchar(20) NOT NULL," \
                  "  `name` varchar(25)," \
                  "  `level` varchar(14)," \
-                 "  `nationality` varchar(10)," \
+                 "  `nationality` varchar(30)," \
                  "  PRIMARY KEY (`id`)" \
                  ") ENGINE=InnoDB"
     commitTable(cursor, "players", createPlayers) 
@@ -58,15 +58,15 @@ def createPlayersTable(cursor):
 def createDiscssTable(cursor):
     createDiscs = "CREATE TABLE `discs` (" \
                  "  `name` varchar(20) NOT NULL," \
-                 "  `max_weigth` varchar(5)," \
-                 "  `speed` varchar(5)," \
-                 "  `glide` varchar(5)," \
-                 "  `turn` varchar(5)," \
-                 "  `fade` varchar(5)," \
+                 "  `max_weigth` int," \
+                 "  `speed` int," \
+                 "  `glide` int," \
+                 "  `turn` int," \
+                 "  `fade` int," \
                  "  `classification` varchar(15)," \
-                 "  `average_range_beginner` varchar(4)," \
-                 "  `average_range_advanced` varchar(4)," \
-                 "  `average_range_pro` varchar(4)," \
+                 "  `average_range_beginner` int," \
+                 "  `average_range_advanced` int," \
+                 "  `average_range_pro` int," \
                  "  PRIMARY KEY (`name`)" \
                  ") ENGINE=InnoDB"
     commitTable(cursor, "discs", createDiscs)                         

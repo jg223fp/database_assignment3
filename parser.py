@@ -8,11 +8,10 @@ cnx = mysql.connector.connect(user="root", password="root123321", host="127.0.0.
 DB_NAME = "disc_golf"
 PLAYERS = os.path.abspath(os.path.dirname(os.path.abspath(__file__))) + "\csv_files\players.csv"
 DISCS = os.path.abspath(os.path.dirname(os.path.abspath(__file__))) + "\csv_files\discs.csv"
-BAGS = os.path.abspath(os.path.dirname(os.path.abspath(__file__))) + "\csv_files\bags.csv"
+BAGS = os.path.abspath(os.path.dirname(os.path.abspath(__file__))) + "\csv_files\\bags.csv"
 HOLES = os.path.abspath(os.path.dirname(os.path.abspath(__file__))) + "\csv_files\holes.csv"
 COMPETITIONS = os.path.abspath(os.path.dirname(os.path.abspath(__file__))) + "\csv_files\competition_results.csv"
 
-  
 def printMenu():
     print('''\n         MAIN MENU 
     Choose one option:
@@ -98,6 +97,17 @@ def createCompetitionResultsTable(cursor):
                  ") ENGINE=InnoDB"
     commitTable(cursor, "competition results", createCompetitionResults) 	 
 
+# Creates the table for the bags.csv file
+def createBagsTable(cursor):
+    createBags = "CREATE TABLE `bags` (" \
+                 "  `owner_id` varchar(10) NOT NULL," \
+                 "  `disc_name` varchar(30) NOT NULL," \
+                 "  `plastic_type` varchar(25) NOT NULL," \
+                 "  `weigth` int NOT NULL," \
+                 "  PRIMARY KEY (`owner_id`, `disc_name`, `plastic_type`, `weigth`)" \
+                 ") ENGINE=InnoDB"
+    commitTable(cursor, "bags", createBags) 
+
 # Puts the table in the database
 def commitTable(cursor, tableName, sqlCreate):    
     try:
@@ -182,6 +192,21 @@ def addResults(cursor, path):
         insertSql.append(command)  
     commitData(cursor, insertSql)
 
+# Reads data from bags.csv and creates a list of sqlcommands to insert them in a table.
+def addBags(cursor, path):
+    bags = pd.read_csv(path)
+    insertSql = []
+    for index, row in bags.iterrows():
+        command =  "INSERT INTO bags (owner_id, disc_name, plastic_type, weigth) "\
+                 "VALUES ('{}','{}','{}','{}');"\
+                .format(
+                row['owner_id'],
+                row['disc_name'],
+                row['plastic_type'],
+                row['weigth'])
+        insertSql.append(command)  
+    commitData(cursor, insertSql)
+
 # Executes a list of queries and commits them to the db.       
 def commitData(cursor, insertSql):
     print("Adding data to table...")
@@ -226,11 +251,13 @@ except mysql.connector.Error as err:
         createDiscssTable(cursor)
         createHolesTable(cursor)
         createCompetitionResultsTable(cursor)
+        createBagsTable(cursor)
         tablesExists = True
         addPlayers(cursor,PLAYERS)
         addDiscs(cursor,DISCS)
         addHoles(cursor,HOLES)
         addResults(cursor,COMPETITIONS)
+        addBags(cursor,BAGS)
         datainTables = True
 
 if not tablesExists:
@@ -261,6 +288,13 @@ if not tablesExists:
 		cursor.execute("SHOW TABLES LIKE 'competition_results'")
 		if cursor.fetchone() == None:
 			createCompetitionResultsTable(cursor)
+		else:
+			print("Table exists")
+
+		print("Checking if table bags exists...")
+		cursor.execute("SHOW TABLES LIKE 'bags'")
+		if cursor.fetchone() == None:
+			createBagsTable(cursor)
 		else:
 			print("Table exists")
 
@@ -307,7 +341,17 @@ if not datainTables:
 		else:
 			print("There is data in the table")
 	except mysql.connector.Error as err:
-		print("Something went wrong when performing query: {}".format(err))		
+		print("Something went wrong when performing query: {}".format(err))
+
+	try:
+		print("Checking if table bags is empty...")          
+		cursor.execute("SELECT * from bags")
+		if len(cursor.fetchall()) < 1:
+			addBags(cursor,BAGS)
+		else:
+			print("There is data in the table")
+	except mysql.connector.Error as err:
+		print("Something went wrong when performing query: {}".format(err))	
 	
 # launch menu system
 choice = 0

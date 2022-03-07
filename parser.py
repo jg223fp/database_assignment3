@@ -10,7 +10,7 @@ PLAYERS = os.path.abspath(os.path.dirname(os.path.abspath(__file__))) + "\csv_fi
 DISCS = os.path.abspath(os.path.dirname(os.path.abspath(__file__))) + "\csv_files\discs.csv"
 BAGS = os.path.abspath(os.path.dirname(os.path.abspath(__file__))) + "\csv_files\bags.csv"
 HOLES = os.path.abspath(os.path.dirname(os.path.abspath(__file__))) + "\csv_files\holes.csv"
-COMPETITIONS = os.path.abspath(os.path.dirname(os.path.abspath(__file__))) + "\csv_files\competitions.csv"
+COMPETITIONS = os.path.abspath(os.path.dirname(os.path.abspath(__file__))) + "\csv_files\competition_results.csv"
 
   
 def printMenu():
@@ -81,7 +81,22 @@ def createHolesTable(cursor):
                  "  `distance` int," \
                  "  PRIMARY KEY (`name`,`hole`)" \
                  ") ENGINE=InnoDB"
-    commitTable(cursor, "holes", createHoles) 
+    commitTable(cursor, "holes", createHoles)
+
+# Creates the table for the competition_results.csv file
+def createCompetitionResultsTable(cursor):
+    createCompetitionResults = "CREATE TABLE `competition_results` (" \
+                 "  `name` varchar(40) NOT NULL," \
+                 "  `year` int NOT NULL," \
+                 "  `course` varchar(40)," \
+                 "  `hole` int NOT NULL," \
+				 "  `player_id` varchar(10) NOT NULL," \
+				 "  `result` int," \
+				 "  `tee_pad_disc` varchar(40)," \
+				 "  `finish_disc` varchar(40)," \
+                 "  PRIMARY KEY (`name`, `year`, `player_id`,`hole`)" \
+                 ") ENGINE=InnoDB"
+    commitTable(cursor, "competition results", createCompetitionResults) 	 
 
 # Puts the table in the database
 def commitTable(cursor, tableName, sqlCreate):    
@@ -148,6 +163,25 @@ def addHoles(cursor, path):
         insertSql.append(command)  
     commitData(cursor, insertSql)
 
+# Reads data from competition_results.csv and creates a list of sqlcommands to insert them in a table.
+def addResults(cursor, path):
+    results = pd.read_csv(path)
+    insertSql = []
+    for index, row in results.iterrows():
+        command =  "INSERT INTO competition_results (name, year, course, hole, player_id, result, tee_pad_disc, finish_disc) "\
+                 "VALUES ('{}','{}','{}','{}','{}','{}','{}','{}');"\
+                .format(
+                row['name'],
+                row['year'],
+                row['course'],
+                row['hole'],
+				row['player_id'],
+				row['result'],
+				row['tee_pad_disc'],
+				row['finish_disc'])
+        insertSql.append(command)  
+    commitData(cursor, insertSql)
+
 # Executes a list of queries and commits them to the db.       
 def commitData(cursor, insertSql):
     print("Adding data to table...")
@@ -160,6 +194,7 @@ def commitData(cursor, insertSql):
         else:
             cnx.commit()   # Make sure data is committed to the database
             print("Data was added")    
+
 
 # Confirm connection
 if cnx.is_connected():
@@ -190,10 +225,12 @@ except mysql.connector.Error as err:
         createPlayersTable(cursor)
         createDiscssTable(cursor)
         createHolesTable(cursor)
+        createCompetitionResultsTable(cursor)
         tablesExists = True
         addPlayers(cursor,PLAYERS)
         addDiscs(cursor,DISCS)
         addHoles(cursor,HOLES)
+        addResults(cursor,COMPETITIONS)
         datainTables = True
 
 if not tablesExists:
@@ -219,9 +256,14 @@ if not tablesExists:
 			createHolesTable(cursor)
 		else:
 			print("Table exists")
+        
+		print("Checking if table competition_results exists...")
+		cursor.execute("SHOW TABLES LIKE 'competition_results'")
+		if cursor.fetchone() == None:
+			createCompetitionResultsTable(cursor)
+		else:
+			print("Table exists")
 
-            
-  
 	except mysql.connector.Error as err:
 		print("Problem when checking table existence".format(DB_NAME))
 
@@ -255,7 +297,17 @@ if not datainTables:
 		else:
 			print("There is data in the table")
 	except mysql.connector.Error as err:
-		print("Something went wrong when performing query: {}".format(err))	
+		print("Something went wrong when performing query: {}".format(err))
+
+	try:
+		print("Checking if table competition_results is empty...")          
+		cursor.execute("SELECT * from competition_results")
+		if len(cursor.fetchall()) < 1:
+			addResults(cursor,COMPETITIONS)
+		else:
+			print("There is data in the table")
+	except mysql.connector.Error as err:
+		print("Something went wrong when performing query: {}".format(err))		
 	
 # launch menu system
 choice = 0

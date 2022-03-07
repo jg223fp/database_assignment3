@@ -13,5 +13,6 @@ querys:
 
 
 JOIN bag.disc_name AND disc.name WHERE bag.owner_id = 1007          (JOIN)
+FULL OUTER JOIN player.id AND competition.player_id where player_id = 1007
 
 

@@ -59,10 +59,10 @@ def createDiscssTable(cursor):
     createDiscs = "CREATE TABLE `discs` (" \
                  "  `name` varchar(20) NOT NULL," \
                  "  `max_weigth` int," \
-                 "  `speed` int," \
-                 "  `glide` int," \
-                 "  `turn` int," \
-                 "  `fade` int," \
+                 "  `speed` smallint," \
+                 "  `glide` smallint," \
+                 "  `turn` smallint signed," \
+                 "  `fade` smallint signed," \
                  "  `classification` varchar(15)," \
                  "  `average_range_beginner` int," \
                  "  `average_range_advanced` int," \
@@ -133,7 +133,7 @@ def addPlayers(cursor, path):
                 row['name'],
                 row['level'],
                 row['nationality'])
-        insertSql.append(command)  
+        insertSql.append(command) 
     commitData(cursor, insertSql)
 
 # Reads data from discs.csv and creates a list of sqlcommands to insert them in a table.

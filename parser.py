@@ -1,5 +1,4 @@
 import os
-from random import choices
 import pandas as pd
 import mysql.connector
 from mysql.connector import errorcode
@@ -54,7 +53,24 @@ def createPlayersTable(cursor):
                  "  `nationality` varchar(10)," \
                  "  PRIMARY KEY (`id`)" \
                  ") ENGINE=InnoDB"
-    commitTable(cursor, "players", createPlayers)                          
+    commitTable(cursor, "players", createPlayers) 
+
+# Creates the table for the discs.csv file
+def createDiscssTable(cursor):
+    createDiscs = "CREATE TABLE `discs` (" \
+                 "  `name` varchar(20) NOT NULL," \
+                 "  `max_weigth` varchar(5)," \
+                 "  `speed` varchar(5)," \
+                 "  `glide` varchar(5)," \
+                 "  `turn` varchar(5)," \
+                 "  `fade` varchar(5)," \
+                 "  `classification` varchar(15)," \
+                 "  `average_range_beginner` varchar(4)," \
+                 "  `average_range_advanced` varchar(4)," \
+                 "  `average_range_pro` varchar(4)," \
+                 "  PRIMARY KEY (`name`)" \
+                 ") ENGINE=InnoDB"
+    commitTable(cursor, "discs", createDiscs)                         
                    
 
 # Puts the table in the database
@@ -83,7 +99,29 @@ def addPlayers(cursor, path):
                 row['level'],
                 row['nationality'])
         insertSql.append(command)  
-    commitData(cursor, insertSql)    
+    commitData(cursor, insertSql)
+
+# Reads data from discs.csv and creates a list of sqlcommands to insert them in a table.
+def addDiscs(cursor, path):
+    discs = pd.read_csv(path)
+    insertSql = []
+    for index, row in discs.iterrows():
+        command =  "INSERT INTO discs (name, max_weigth, speed, glide, turn,"\
+         "fade, classification, average_range_beginner, average_range_advanced, average_range_pro) "\
+                 "VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}');"\
+                .format(
+                row['name'],
+                row['max_weigth'],
+                row['speed'],
+                row['glide'],
+                row['turn'],
+                row['fade'],
+                row['classification'],
+                row['average_range_beginner'],
+                row['average_range_advanced'],
+                row['average_range_pro'])
+        insertSql.append(command)  
+    commitData(cursor, insertSql)     
 
 # Executes a list of queries and commits them to the db.       
 def commitData(cursor, insertSql):
@@ -125,8 +163,10 @@ except mysql.connector.Error as err:
         print("Database {} created succesfully.".format(DB_NAME))
         cnx.database = DB_NAME
         createPlayersTable(cursor)
+        createDiscssTable(cursor)
         tablesExists = True
         addPlayers(cursor,PLAYERS)
+        addDiscs(cursor,DISCS)
         datainTables = True
 
 if not tablesExists:
@@ -138,6 +178,14 @@ if not tablesExists:
 			createPlayersTable(cursor)
 		else:
 			print("Table exists")
+
+		print("Checking if table discs exists...")
+		cursor.execute("SHOW TABLES LIKE 'discs'")
+		if cursor.fetchone() == None:
+			createDiscssTable(cursor)
+		else:
+			print("Table exists")
+  
 	except mysql.connector.Error as err:
 		print("Problem when checking table existence".format(DB_NAME))
 
@@ -152,6 +200,16 @@ if not datainTables:
 			print("There is data in the table")
 	except mysql.connector.Error as err:
 		print("Something went wrong when performing query: {}".format(err))
+
+	try:
+		print("Checking if table discs is empty...")          
+		cursor.execute("SELECT * from discs")
+		if len(cursor.fetchall()) < 1:
+			addDiscs(cursor, DISCS)
+		else:
+			print("There is data in the table")
+	except mysql.connector.Error as err:
+		print("Something went wrong when performing query: {}".format(err))	
 	
 # launch menu system
 choice = 0

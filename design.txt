@@ -4,11 +4,67 @@ Disc golf manegment system
 https://www.latitude64.se/disc-golf-products/golf-discs/fairway-drivers/river/
 
 querys:
+- which midrange discs can be thrown over 50 meter by a beginner?
+SELECT name FROM disc_golf.discs where classification = 'midrange' and average_range_beginner >= 50;
+
 - what is the most used disk in compettitions by this nationality this year?             (multirelational)
-- which midrange discs can be thrown over 50 meter by a beginner?   (multi relational)
-- Classification of the disc most used at tee-padd on slottskogen course  (multirelational) 
+
+- Classification of the disc most used at tee-padd on slottskogen course  (multirelational)(aggregation)(group by)
+
+name of the disc:
+SELECT tee_pad_disc FROM 
+(SELECT tee_pad_disc , COUNT(tee_pad_disc) as discCount
+FROM disc_golf.competition_results
+GROUP BY tee_pad_disc     
+ORDER BY discCount DESC   # sort in falling order
+LIMIT 1) AS mostUsed;                  # get the first result
+
+SELECT 
+    classification
+FROM
+    disc_golf.discs
+WHERE
+    name = (SELECT 
+            tee_pad_disc
+        FROM
+            (SELECT 
+                tee_pad_disc, COUNT(tee_pad_disc) AS discCount
+            FROM
+                disc_golf.competition_results
+            GROUP BY tee_pad_disc
+            ORDER BY discCount DESC                 # sort in falling order
+            LIMIT 1) AS mostUsed);                  # get the first result
+
+
+
 - Which competitions did this player compete in during this year?    (multirelational)
-- Most owned disc                                                  (multirelational)            
+
+
+- Facts about the most owned disc                                                  (multirelational)   
+SELECT 
+    name,
+    classification, 
+    speed,
+    glide,
+    turn,
+    fade,
+    average_range_beginner,
+    average_range_advanced,
+    average_range_pro
+FROM
+    disc_golf.discs
+WHERE
+    name = (SELECT 
+            disc_name
+        FROM
+            (SELECT 
+                disc_name, COUNT(disc_name) AS discCount
+            FROM
+                disc_golf.bags
+            GROUP BY disc_name
+            ORDER BY discCount DESC                  # order in decending
+            LIMIT 1) AS mostOwned);                  # get the first result
+         
 - Longest hole on each discgolf course?                        (grouping & aggregation)  group by course  max(distance)
 
 

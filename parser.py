@@ -71,7 +71,17 @@ def createDiscssTable(cursor):
                  "  PRIMARY KEY (`name`)" \
                  ") ENGINE=InnoDB"
     commitTable(cursor, "discs", createDiscs)                         
-                   
+
+# Creates the table for the holes.csv file
+def createHolesTable(cursor):
+    createHoles = "CREATE TABLE `holes` (" \
+                 "  `name` varchar(40) NOT NULL," \
+                 "  `hole` int NOT NULL," \
+                 "  `par` int," \
+                 "  `distance` int," \
+                 "  PRIMARY KEY (`name`,`hole`)" \
+                 ") ENGINE=InnoDB"
+    commitTable(cursor, "holes", createHoles) 
 
 # Puts the table in the database
 def commitTable(cursor, tableName, sqlCreate):    
@@ -123,6 +133,21 @@ def addDiscs(cursor, path):
         insertSql.append(command)  
     commitData(cursor, insertSql)     
 
+# Reads data from holes.csv and creates a list of sqlcommands to insert them in a table.
+def addHoles(cursor, path):
+    holes = pd.read_csv(path)
+    insertSql = []
+    for index, row in holes.iterrows():
+        command =  "INSERT INTO holes (name, hole, par, distance) "\
+                 "VALUES ('{}','{}','{}','{}');"\
+                .format(
+                row['name'],
+                row['hole'],
+                row['par'],
+                row['distance'])
+        insertSql.append(command)  
+    commitData(cursor, insertSql)
+
 # Executes a list of queries and commits them to the db.       
 def commitData(cursor, insertSql):
     print("Adding data to table...")
@@ -164,9 +189,11 @@ except mysql.connector.Error as err:
         cnx.database = DB_NAME
         createPlayersTable(cursor)
         createDiscssTable(cursor)
+        createHolesTable(cursor)
         tablesExists = True
         addPlayers(cursor,PLAYERS)
         addDiscs(cursor,DISCS)
+        addHoles(cursor,HOLES)
         datainTables = True
 
 if not tablesExists:
@@ -185,6 +212,15 @@ if not tablesExists:
 			createDiscssTable(cursor)
 		else:
 			print("Table exists")
+
+		print("Checking if table holes exists...")
+		cursor.execute("SHOW TABLES LIKE 'holes'")
+		if cursor.fetchone() == None:
+			createHolesTable(cursor)
+		else:
+			print("Table exists")
+
+            
   
 	except mysql.connector.Error as err:
 		print("Problem when checking table existence".format(DB_NAME))
@@ -206,6 +242,16 @@ if not datainTables:
 		cursor.execute("SELECT * from discs")
 		if len(cursor.fetchall()) < 1:
 			addDiscs(cursor, DISCS)
+		else:
+			print("There is data in the table")
+	except mysql.connector.Error as err:
+		print("Something went wrong when performing query: {}".format(err))
+
+	try:
+		print("Checking if table holes is empty...")          
+		cursor.execute("SELECT * from holes")
+		if len(cursor.fetchall()) < 1:
+			addHoles(cursor,HOLES)
 		else:
 			print("There is data in the table")
 	except mysql.connector.Error as err:

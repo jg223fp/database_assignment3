@@ -3,37 +3,14 @@ import pandas as pd
 import mysql.connector
 from mysql.connector import errorcode
 
-#Connection
-cnx = mysql.connector.connect(user="root", password="root123321", host="127.0.0.1")
+global cnx
+
 DB_NAME = "disc_golf"
 PLAYERS = os.path.abspath(os.path.dirname(os.path.abspath(__file__))) + "\csv_files\players.csv"
 DISCS = os.path.abspath(os.path.dirname(os.path.abspath(__file__))) + "\csv_files\discs.csv"
 BAGS = os.path.abspath(os.path.dirname(os.path.abspath(__file__))) + "\csv_files\\bags.csv"
 HOLES = os.path.abspath(os.path.dirname(os.path.abspath(__file__))) + "\csv_files\holes.csv"
 COMPETITIONS = os.path.abspath(os.path.dirname(os.path.abspath(__file__))) + "\csv_files\competition_results.csv"
-
-def printMenu():
-    print('''\n         MAIN MENU 
-    Choose one option:
-    1: -----
-    2: ----
-    3: ----
-    4: ------
-    5: ----
-    6: Quit
-          ''')
-
-# Returns a user input for a menu selection.    
-def getMenuChoise():
-    while True:
-        try:    
-            selection = int(input("Selection: "))
-            if selection >= 1 and selection <= 6:
-                return int(selection)
-            print("Value must be inside range.")
-        except ValueError:
-            print("Value must be an integer.") 
-            selection = -1
                
 # Creates the database.
 def create_database(cursor, DB_NAME):
@@ -208,7 +185,7 @@ def addBags(cursor, path):
     commitData(cursor, insertSql)
 
 # Executes a list of queries and commits them to the db.       
-def commitData(cursor, insertSql):
+def commitData(cnx, cursor, insertSql):
     print("Adding data to table...")
     for query in insertSql:
         try:
@@ -221,146 +198,141 @@ def commitData(cursor, insertSql):
             print("Data was added")    
 
 
-# Confirm connection
-if cnx.is_connected():
-	print("Connection to MySQL established.")
-else:
-    print("Couldn't connect to server. Terminating...")
-    quit() 
-
-# Creating cursor to execute commands  
-cursor = cnx.cursor(buffered=True) 
-
-#Booleans used for the controll of what exists at boot 
-tablesExists = False
-datainTables = False
-
-
-# Check if db exist
-print("Controlling if database exists...")
-try:
-    cursor.execute("USE {}".format(DB_NAME))
-    print("Database {} already exists.".format(DB_NAME))
-except mysql.connector.Error as err:
-    print("Database {} does not exist".format(DB_NAME))
-    if err.errno == errorcode.ER_BAD_DB_ERROR:
-        create_database(cursor, DB_NAME)
-        print("Database {} created succesfully.".format(DB_NAME))
-        cnx.database = DB_NAME
-        createPlayersTable(cursor)
-        createDiscssTable(cursor)
-        createHolesTable(cursor)
-        createCompetitionResultsTable(cursor)
-        createBagsTable(cursor)
-        tablesExists = True
-        addPlayers(cursor,PLAYERS)
-        addDiscs(cursor,DISCS)
-        addHoles(cursor,HOLES)
-        addResults(cursor,COMPETITIONS)
-        addBags(cursor,BAGS)
-        datainTables = True
-
-if not tablesExists:
-	# check if tables exists
-	try:
-		print("Checking if table players exists...")
-		cursor.execute("SHOW TABLES LIKE 'players'")
-		if cursor.fetchone() == None:
-			createPlayersTable(cursor)
-		else:
-			print("Table exists")
-
-		print("Checking if table discs exists...")
-		cursor.execute("SHOW TABLES LIKE 'discs'")
-		if cursor.fetchone() == None:
-			createDiscssTable(cursor)
-		else:
-			print("Table exists")
-
-		print("Checking if table holes exists...")
-		cursor.execute("SHOW TABLES LIKE 'holes'")
-		if cursor.fetchone() == None:
-			createHolesTable(cursor)
-		else:
-			print("Table exists")
-        
-		print("Checking if table competition_results exists...")
-		cursor.execute("SHOW TABLES LIKE 'competition_results'")
-		if cursor.fetchone() == None:
-			createCompetitionResultsTable(cursor)
-		else:
-			print("Table exists")
-
-		print("Checking if table bags exists...")
-		cursor.execute("SHOW TABLES LIKE 'bags'")
-		if cursor.fetchone() == None:
-			createBagsTable(cursor)
-		else:
-			print("Table exists")
-
-	except mysql.connector.Error as err:
-		print("Problem when checking table existence".format(DB_NAME))
-
-if not datainTables:
-	#check if data in tables
-	try:
-		print("Checking if table players is empty...")          
-		cursor.execute("SELECT * from players")
-		if len(cursor.fetchall()) < 1:
-			addPlayers(cursor, PLAYERS)
-		else:
-			print("There is data in the table")
-	except mysql.connector.Error as err:
-		print("Something went wrong when performing query: {}".format(err))
-
-	try:
-		print("Checking if table discs is empty...")          
-		cursor.execute("SELECT * from discs")
-		if len(cursor.fetchall()) < 1:
-			addDiscs(cursor, DISCS)
-		else:
-			print("There is data in the table")
-	except mysql.connector.Error as err:
-		print("Something went wrong when performing query: {}".format(err))
-
-	try:
-		print("Checking if table holes is empty...")          
-		cursor.execute("SELECT * from holes")
-		if len(cursor.fetchall()) < 1:
-			addHoles(cursor,HOLES)
-		else:
-			print("There is data in the table")
-	except mysql.connector.Error as err:
-		print("Something went wrong when performing query: {}".format(err))
-
-	try:
-		print("Checking if table competition_results is empty...")          
-		cursor.execute("SELECT * from competition_results")
-		if len(cursor.fetchall()) < 1:
-			addResults(cursor,COMPETITIONS)
-		else:
-			print("There is data in the table")
-	except mysql.connector.Error as err:
-		print("Something went wrong when performing query: {}".format(err))
-
-	try:
-		print("Checking if table bags is empty...")          
-		cursor.execute("SELECT * from bags")
-		if len(cursor.fetchall()) < 1:
-			addBags(cursor,BAGS)
-		else:
-			print("There is data in the table")
-	except mysql.connector.Error as err:
-		print("Something went wrong when performing query: {}".format(err))	
-	
-# launch menu system
-choice = 0
-while choice != 6:
-	printMenu()
-	choice = getMenuChoise()     # collect choice from user.
  
 
-print("Terminating session...") 
-# Close connection
-cursor.close()
-cnx.close()
+def parserBoot(recivedCNX, cursor):
+
+    global cnx 
+    cnx = recivedCNX
+
+        # Confirm connection
+    if cnx.is_connected():
+        print("Connection to MySQL established.")
+    else:
+        print("Couldn't connect to server. Terminating...")
+        quit()
+
+    #Booleans used for the controll of what exists at boot 
+    tablesExists = False
+    datainTables = False
+
+
+    # Check if db exist
+    print("Controlling if database exists...")
+    try:
+        cursor.execute("USE {}".format(DB_NAME))
+        print("Database {} already exists.".format(DB_NAME))
+    except mysql.connector.Error as err:
+        print("Database {} does not exist".format(DB_NAME))
+        if err.errno == errorcode.ER_BAD_DB_ERROR:
+            create_database(cursor, DB_NAME)
+            print("Database {} created succesfully.".format(DB_NAME))
+            cnx.database = DB_NAME
+            createPlayersTable(cursor)
+            createDiscssTable(cursor)
+            createHolesTable(cursor)
+            createCompetitionResultsTable(cursor)
+            createBagsTable(cursor)
+            tablesExists = True
+            addPlayers(cursor,PLAYERS)
+            addDiscs(cursor,DISCS)
+            addHoles(cursor,HOLES)
+            addResults(cursor,COMPETITIONS)
+            addBags(cursor,BAGS)
+            datainTables = True
+
+    if not tablesExists:
+        # check if tables exists
+        try:
+            print("Checking if table players exists...")
+            cursor.execute("SHOW TABLES LIKE 'players'")
+            if cursor.fetchone() == None:
+                createPlayersTable(cursor)
+            else:
+                print("Table exists")
+
+            print("Checking if table discs exists...")
+            cursor.execute("SHOW TABLES LIKE 'discs'")
+            if cursor.fetchone() == None:
+                createDiscssTable(cursor)
+            else:
+                print("Table exists")
+
+            print("Checking if table holes exists...")
+            cursor.execute("SHOW TABLES LIKE 'holes'")
+            if cursor.fetchone() == None:
+                createHolesTable(cursor)
+            else:
+                print("Table exists")
+            
+            print("Checking if table competition_results exists...")
+            cursor.execute("SHOW TABLES LIKE 'competition_results'")
+            if cursor.fetchone() == None:
+                createCompetitionResultsTable(cursor)
+            else:
+                print("Table exists")
+
+            print("Checking if table bags exists...")
+            cursor.execute("SHOW TABLES LIKE 'bags'")
+            if cursor.fetchone() == None:
+                createBagsTable(cursor)
+            else:
+                print("Table exists")
+
+        except mysql.connector.Error as err:
+            print("Problem when checking table existence".format(DB_NAME))
+
+    if not datainTables:
+        #check if data in tables
+        try:
+            print("Checking if table players is empty...")          
+            cursor.execute("SELECT * from players")
+            if len(cursor.fetchall()) < 1:
+                addPlayers(cursor, PLAYERS)
+            else:
+                print("There is data in the table")
+        except mysql.connector.Error as err:
+            print("Something went wrong when performing query: {}".format(err))
+
+        try:
+            print("Checking if table discs is empty...")          
+            cursor.execute("SELECT * from discs")
+            if len(cursor.fetchall()) < 1:
+                addDiscs(cursor, DISCS)
+            else:
+                print("There is data in the table")
+        except mysql.connector.Error as err:
+            print("Something went wrong when performing query: {}".format(err))
+
+        try:
+            print("Checking if table holes is empty...")          
+            cursor.execute("SELECT * from holes")
+            if len(cursor.fetchall()) < 1:
+                addHoles(cursor,HOLES)
+            else:
+                print("There is data in the table")
+        except mysql.connector.Error as err:
+            print("Something went wrong when performing query: {}".format(err))
+
+        try:
+            print("Checking if table competition_results is empty...")          
+            cursor.execute("SELECT * from competition_results")
+            if len(cursor.fetchall()) < 1:
+                addResults(cursor,COMPETITIONS)
+            else:
+                print("There is data in the table")
+        except mysql.connector.Error as err:
+            print("Something went wrong when performing query: {}".format(err))
+
+        try:
+            print("Checking if table bags is empty...")          
+            cursor.execute("SELECT * from bags")
+            if len(cursor.fetchall()) < 1:
+                addBags(cursor,BAGS)
+            else:
+                print("There is data in the table")
+        except mysql.connector.Error as err:
+            print("Something went wrong when performing query: {}".format(err))
+            
+    return cursor
+

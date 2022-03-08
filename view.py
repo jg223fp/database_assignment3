@@ -24,13 +24,38 @@ def printMenu():
     
 
 # Returns a user input for a menu selection.    
-def getMenuChoise():
+def getMenuChoise(top):
     while True:
         try:    
             selection = int(input("Selection: "))
-            if selection >= 1 and selection <= 6:
+            if selection >= 1 and selection <= top:
                 return int(selection)
             print("Value must be inside range.")
         except ValueError:
             print("Value must be an integer.") 
             selection = -1
+            
+def promptForPlayerId(): 
+    while True:
+        try:    
+            selection = int(input("Enter ID of the player which bag you want to look in: "))
+            return selection
+        except ValueError:
+            print("Value must be an integer.") 
+            
+            
+def presentPlayers(cursor):
+    print("| {:<15} | {:<20} | {:<15} | {:<15} |".format(\
+     "Name",
+     "ID",
+     "Level",
+     "Nationality"))
+    print("-"*80)
+    
+    for name,id,nationality,level in cursor:
+        print("| {:<15} | {:<20} | {:<15} | {:<15} |".format(\
+     name,
+     id,
+     nationality,
+     level))
+        

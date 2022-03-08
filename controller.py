@@ -5,6 +5,9 @@ from mysql.connector import errorcode
 import view
 import parser
 
+#Connection
+cnx = mysql.connector.connect(user="root", password="root123321", host="127.0.0.1")
+
 def lookInsidePlayerBags(cursor):
     #list players
     try:
@@ -41,11 +44,8 @@ def lookInsidePlayerBags(cursor):
     except mysql.connector.Error as err:
         print("Something went wrong when performing query: {}".format(err))
         
-    
+    view.showBag(cursor,playerName)
 
-
-#Connection
-cnx = mysql.connector.connect(user="root", password="root123321", host="127.0.0.1")
 
 # Creating cursor to execute commands  
 cursor = cnx.cursor(buffered=True) 
@@ -71,6 +71,7 @@ while choice != 7:
                 lookInsidePlayerBags(cursor)
             case 6:
                 print("asas")
+    input("Press enter to continue...")
                 
                 
 print("Terminating session...") 

@@ -46,16 +46,39 @@ def promptForPlayerId():
             
 def presentPlayers(cursor):
     print("| {:<15} | {:<20} | {:<15} | {:<15} |".format(\
-     "Name",
      "ID",
+     "Name",
      "Level",
      "Nationality"))
     print("-"*80)
     
-    for name,id,nationality,level in cursor:
+    for id,name,nationality,level in cursor:
         print("| {:<15} | {:<20} | {:<15} | {:<15} |".format(\
-     name,
      id,
+     name,
      nationality,
      level))
-        
+
+def showBag(cursor,name):
+    print("\n {}s bag".format(name))
+    print("| {:<15} | {:<15} | {:<7} | {:<5} | {:<5} | {:<5} | {:<5} | {:<15} |".format(\
+     "Disc name",
+     "plastic",
+     "weigth(g)",
+     "speed",
+     "glide",
+     "turn",
+     "fade",
+     "classification"))
+    print("-"*80)
+    
+    for name,plastic,weigth,speed,glide,turn,fade,classification in cursor:
+        print("| {:<15} | {:<15} | {:<7}   | {:<5} | {:<5} | {:<5} | {:<5} | {:<15} |".format(\
+     name,
+     plastic,
+     weigth,
+     speed,
+     glide,
+     turn,
+     fade,
+     classification))

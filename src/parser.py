@@ -110,7 +110,7 @@ def addPlayers(cursor, path):
                 row['name'],
                 row['level'],
                 row['nationality'])
-        insertSql.append(command) 
+        insertSql.append(command)
     commitData(cursor, insertSql)
 
 # Reads data from discs.csv and creates a list of sqlcommands to insert them in a table.
@@ -185,7 +185,7 @@ def addBags(cursor, path):
     commitData(cursor, insertSql)
 
 # Executes a list of queries and commits them to the db.       
-def commitData(cnx, cursor, insertSql):
+def commitData(cursor, insertSql):
     print("Adding data to table...")
     for query in insertSql:
         try:
@@ -201,7 +201,6 @@ def commitData(cnx, cursor, insertSql):
  
 
 def parserBoot(recivedCNX, cursor):
-
     global cnx 
     cnx = recivedCNX
 

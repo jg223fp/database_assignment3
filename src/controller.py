@@ -50,8 +50,8 @@ def lookInsidePlayerBags(cursor):
 # Creating cursor to execute commands  
 cursor = cnx.cursor(buffered=True) 
 
-#parse data into db and recive cursor
-cursor = parser.parserBoot(cnx,cursor)
+#parse data into db
+parser.parserBoot(cnx,cursor)
 
 # launch menu system
 choice = 0
@@ -60,18 +60,18 @@ while choice != 7:
     if choice != 7:
         match choice:
             case 1:
-                print("asas")
+                pass
             case 2:
-                print("asas")
+                pass
             case 3:
-                print("asas")
+                pass
             case 4:
-                print("asas")
+                pass
             case 5:
                 lookInsidePlayerBags(cursor)
             case 6:
-                print("asas")
-    input("Press enter to continue...")
+                pass
+        input("Press enter to continue...")
                 
                 
 print("Terminating session...") 

@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 
+#prints main menu and prompts for a choice
 def printMenu():
     layout = [[sg.Text("Choose one option:")],     # Part 2 - The Layout
             [sg.Text("1: Who is the winner of a specific competition")],
@@ -34,7 +35,8 @@ def getMenuChoise(top):
         except ValueError:
             print("Value must be an integer.") 
             selection = -1
-            
+
+# Prompts for and return a member ID as an int            
 def promptForPlayerId(): 
     while True:
         try:    
@@ -43,7 +45,7 @@ def promptForPlayerId():
         except ValueError:
             print("Value must be an integer.") 
             
-            
+# Prints out player data          
 def presentPlayers(cursor):
     print("| {:<15} | {:<20} | {:<15} | {:<15} |".format(\
      "ID",
@@ -59,6 +61,7 @@ def presentPlayers(cursor):
      nationality,
      level))
 
+# prints the bag of a player
 def showBag(cursor,name):
     print("\n {}s bag".format(name))
     print("| {:<15} | {:<15} | {:<7} | {:<5} | {:<5} | {:<5} | {:<5} | {:<15} |".format(\

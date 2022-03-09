@@ -8,6 +8,46 @@ import parser
 #Connection
 cnx = mysql.connector.connect(user="root", password="root123321", host="127.0.0.1")
 
+# Calculates the winner for a given competition
+def whoIsWinner(cursor):
+    #list competitions
+    try:
+        cursor.execute("SELECT DISTINCT name, year FROM disc_golf.competition_results;")
+    except mysql.connector.Error as err:
+        print("Something went wrong when performing query: {}".format(err))
+    
+    competitions = cursor.fetchall()
+    
+    #present competitions and get users selection
+    choice =view.presentCompetitions(competitions)
+    
+    getWinner = "SELECT name,"\
+            "id,"\
+            "nationality,"\
+            "total "\
+            "from disc_golf.players "\
+            "JOIN "\
+            "(SELECT "\
+            "player_id, SUM(result) AS total "\
+            "FROM "\
+            "disc_golf.competition_results "\
+            "WHERE "\
+            "year = '2020' "\
+            "AND competition_results.name = 'slottsskogen open' "\
+            "GROUP BY player_id "\
+            "ORDER by total "\
+            "LIMIT 1 "\
+            ") as winner ON players.id = winner.player_id;"    # add ´.format for year and competition name
+    try:
+        cursor.execute(getWinner)
+    except mysql.connector.Error as err:
+        print("Something went wrong when performing query: {}".format(err))
+    
+    #fetch winner and present in view
+    winner = cursor.fetchall()
+    view.presentWinner(winner)
+
+    #Lets you look in a selected players bag
 def lookInsidePlayerBags(cursor):
     #list players
     try:
@@ -60,7 +100,7 @@ while choice != 7:
     if choice != 7:
         match choice:
             case 1:
-                pass
+                whoIsWinner(cursor)
             case 2:
                 pass
             case 3:

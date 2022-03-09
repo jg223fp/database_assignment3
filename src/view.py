@@ -85,3 +85,13 @@ def showBag(cursor,name):
      turn,
      fade,
      classification))
+ 
+#present competitions and returns a list with the name and year of the competition       
+def presentCompetitions(competitions):
+    i = 1
+    for c in competitions:
+        print("{}. {} {}".format(i, c[0],c[1]))
+        i += 1
+
+def presentWinner(winner):
+    print(winner)

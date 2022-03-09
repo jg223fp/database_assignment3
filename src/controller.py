@@ -8,6 +8,9 @@ import parser
 #Connection
 cnx = mysql.connector.connect(user="root", password="root123321", host="127.0.0.1")
 
+def throwRange():
+    pass
+
 # Calculates the winner for a given competition
 def whoIsWinner(cursor):
     #list competitions
@@ -102,7 +105,7 @@ while choice != 7:
             case 1:
                 whoIsWinner(cursor)
             case 2:
-                pass
+                throwRange(cursor)
             case 3:
                 pass
             case 4:

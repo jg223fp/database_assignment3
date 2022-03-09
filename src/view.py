@@ -95,3 +95,11 @@ def presentCompetitions(competitions):
 
 def presentWinner(winner):
     print(winner)
+
+# returns a list with collected data [classification,level,distance]  
+def getPlayerAttributes():
+    pass
+
+#lists the following attributes from the discs provided: name, speed, glide, turn, fade 
+def showDiscs(discs):
+    pass

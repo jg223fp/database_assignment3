@@ -103,3 +103,11 @@ def getPlayerAttributes():
 #lists the following attributes from the discs provided: name, speed, glide, turn, fade 
 def showDiscs(discs):
     pass
+
+#lists all the courses from the provided list and return the one that the user selects
+def listCourses(courses):
+    pass
+
+#presents the provided disc class as the most used on tee pads for the provided course
+def presentDiscClass(course, discClass):
+    pass

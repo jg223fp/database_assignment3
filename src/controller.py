@@ -8,6 +8,41 @@ import parser
 #Connection
 cnx = mysql.connector.connect(user="root", password="root123321", host="127.0.0.1")
 
+def longestHole(cursor):
+    #list competitions
+    try:
+        cursor.execute("SELECT DISTINCT name, year FROM disc_golf.competition_results;")
+    except mysql.connector.Error as err:
+        print("Something went wrong when performing query: {}".format(err))
+    
+    competitions = cursor.fetchall()
+    
+    #present competitions and get users selection (name and year) in a list
+    choice = view.presentCompetitions(competitions)
+    
+    getLongestHole = "select "\
+        "competition_results.name,"\
+        "year,course,"\
+        "holes.hole,"\
+        "par, distance "\
+        "from disc_golf.competition_results "\
+        "JOIN holes ON competition_results.course = holes.name "\
+        "AND competition_results.hole = holes.hole " \
+        "AND competition_results.name  = {} "\
+        "AND year = {} "\
+        "order by distance DESC"\
+        "limit 1;".format(choice[0],choice[1])
+        
+    #fetch longest hole in competition
+    try:
+        cursor.execute(getLongestHole)
+    except mysql.connector.Error as err:
+        print("Something went wrong when performing query: {}".format(err))
+    hole = cursor.fetchone()
+    
+    #display hole in view
+    view.showHoleInfo(hole)
+
 def mostOwnedDiscFacts():
     getDisc = "SELECT "\
     "name,"\
@@ -114,7 +149,7 @@ def whoIsWinner(cursor):
     
     competitions = cursor.fetchall()
     
-    #present competitions and get users selection
+    #present competitions and get users selection (name and year) in a list
     choice =view.presentCompetitions(competitions)
     
     getWinner = "SELECT name,"\
@@ -128,12 +163,12 @@ def whoIsWinner(cursor):
             "FROM "\
             "disc_golf.competition_results "\
             "WHERE "\
-            "year = '2020' "\
-            "AND competition_results.name = 'slottsskogen open' "\
+            "year = {} "\
+            "AND competition_results.name = {} "\
             "GROUP BY player_id "\
             "ORDER by total "\
             "LIMIT 1 )"\
-            " as winner ON players.id = winner.player_id;"    # add ´.format for year and competition name
+            " as winner ON players.id = winner.player_id;".format(choice[1],choice[0]) 
     try:
         cursor.execute(getWinner)
     except mysql.connector.Error as err:
@@ -210,7 +245,7 @@ while choice != 7:
             case 5:
                 lookInsidePlayerBags(cursor)
             case 6:
-                pass
+                longestHole(cursor)
                 
 print("Terminating session...") 
 # Close connection

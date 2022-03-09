@@ -115,3 +115,9 @@ def presentDiscClass(course, discClass):
 #presents all the attributes of the provided most owned disc
 def presentMostOwnedDisc(disc):
     pass
+
+#present the longest hole from recived list[competition_name, year, course, hole_number,distance ]
+def showHoleInfo(hole):
+    #In the COMPETITION_NAME from YEAR played on COURSE
+    # it was HOLE_NUMBER that was the longest. It has a distance of DISTANCE
+    pass

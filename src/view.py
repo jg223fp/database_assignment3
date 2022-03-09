@@ -111,3 +111,7 @@ def listCourses(courses):
 #presents the provided disc class as the most used on tee pads for the provided course
 def presentDiscClass(course, discClass):
     pass
+
+#presents all the attributes of the provided most owned disc
+def presentMostOwnedDisc(disc):
+    pass

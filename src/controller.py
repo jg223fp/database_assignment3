@@ -8,6 +8,42 @@ import parser
 #Connection
 cnx = mysql.connector.connect(user="root", password="root123321", host="127.0.0.1")
 
+def mostOwnedDiscFacts():
+    getDisc = "SELECT "\
+    "name,"\
+    "classification, "\
+    "speed,"\
+    "glide, "\
+    "turn, "\
+    "fade, "\
+    "average_range_beginner, "\
+    "average_range_advanced, "\
+    "average_range_pro" \
+    "FROM "\
+    "disc_golf.discs "\
+    "WHERE "\
+    "name = (SELECT "\
+    "disc_name "\
+    "FROM "\
+    "(SELECT "\
+    "disc_name, "\
+    "COUNT(disc_name) AS discCount "\
+    "FROM "\
+    "disc_golf.bags "\
+    "GROUP BY disc_name" \
+    "ORDER BY discCount DESC LIMIT 1) AS mostOwned);"     
+    
+    #fetch disc
+    try:
+        cursor.execute(getDisc)
+    except mysql.connector.Error as err:
+        print("Something went wrong when performing query: {}".format(err))
+    
+    #present disc in view
+    disc = cursor.fetchall()
+    view.presentMostOwnedDisc(disc)
+                 
+
 def mostUsedDiscClass():
      #fetch courses
     try:
@@ -123,8 +159,12 @@ def lookInsidePlayerBags(cursor):
         cursor.execute("SELECT name from disc_golf.players where id = {}".format(playerId))
     except mysql.connector.Error as err:
         print("Something went wrong when performing query: {}".format(err))
-    playerName = cursor.fetchone()[0]
-  
+        
+    playerN = cursor.fetchone()
+    if (playerN == None):   #return from method if no player id was provided
+        return
+    playerName = playerN[0]
+    
     fetchBag = "SELECT disc_name,"\
     "plastic_type,"\
     "weigth,"\
@@ -166,13 +206,11 @@ while choice != 7:
             case 3:
                 mostUsedDiscClass(cursor)
             case 4:
-                pass
+                mostOwnedDiscFacts(cursor)
             case 5:
                 lookInsidePlayerBags(cursor)
             case 6:
                 pass
-        input("Press enter to continue...")
-                
                 
 print("Terminating session...") 
 # Close connection

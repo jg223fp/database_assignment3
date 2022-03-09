@@ -8,8 +8,29 @@ import parser
 #Connection
 cnx = mysql.connector.connect(user="root", password="root123321", host="127.0.0.1")
 
+# Tells what discs can be used to throw a given range
 def throwRange():
-    pass
+    
+    userData = view.getplayerAttributes()
+    classification = userData[0]
+    level = userData[1]
+    distance = userData[2]
+    
+    getDiscs = "SELECT name, speed,glide,turn,fade "\
+               "FROM disc_golf.discs "\
+                "where classification = {} "\
+                "and {} >= {};.format(classification, level,range )"\
+                .format(classification, level, distance)
+    
+    #fetch Discs
+    try:
+        cursor.execute(getDiscs)
+    except mysql.connector.Error as err:
+        print("Something went wrong when performing query: {}".format(err))
+     
+    #show discs in view    
+    discs = cursor.fetchall()
+    view.showDiscs(discs)
 
 # Calculates the winner for a given competition
 def whoIsWinner(cursor):

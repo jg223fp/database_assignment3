@@ -1,4 +1,4 @@
-## Timeplan
+## Timelog
 
 ### Johan Gustafsson jg223fp
 | Activity       | Date  |    Time spent|

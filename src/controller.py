@@ -8,6 +8,42 @@ import parser
 #Connection
 cnx = mysql.connector.connect(user="root", password="root123321", host="127.0.0.1")
 
+def mostUsedDiscClass():
+     #fetch courses
+    try:
+        cursor.execute("SELECT distinct name from disc_golf.holes;")
+    except mysql.connector.Error as err:
+        print("Something went wrong when performing query: {}".format(err))
+    courses = cursor.fetchall()
+    
+    choice = view.listCourses(courses)
+    
+    getDiscClass = "SELECT "\
+                "classification "\
+                "FROM "\
+                "disc_golf.discs "\
+                "WHERE "\
+                "name = (SELECT "\
+                "tee_pad_disc "\
+                "FROM "\
+                "(SELECT "\
+                "tee_pad_disc, COUNT(tee_pad_disc) AS discCount "\
+                "FROM "\
+                "disc_golf.competition_results where competition_results.course = {} "\
+                "GROUP BY tee_pad_disc "\
+                "ORDER BY discCount DESC "\
+                "LIMIT 1) AS mostUsed);".format(choice)                  
+
+#fetch discclass
+    try:
+        cursor.execute(getDiscClass)
+    except mysql.connector.Error as err:
+        print("Something went wrong when performing query: {}".format(err))
+    discClass = cursor.fetchall()
+    
+    view.presentDiscClass(choice, discClass)
+
+
 # Tells what discs can be used to throw a given range
 def throwRange():
     
@@ -60,8 +96,8 @@ def whoIsWinner(cursor):
             "AND competition_results.name = 'slottsskogen open' "\
             "GROUP BY player_id "\
             "ORDER by total "\
-            "LIMIT 1 "\
-            ") as winner ON players.id = winner.player_id;"    # add ´.format for year and competition name
+            "LIMIT 1 )"\
+            " as winner ON players.id = winner.player_id;"    # add ´.format for year and competition name
     try:
         cursor.execute(getWinner)
     except mysql.connector.Error as err:
@@ -128,7 +164,7 @@ while choice != 7:
             case 2:
                 throwRange(cursor)
             case 3:
-                pass
+                mostUsedDiscClass(cursor)
             case 4:
                 pass
             case 5:

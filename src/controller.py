@@ -6,7 +6,7 @@ import view
 import parser
 
 #Connection
-cnx = mysql.connector.connect(user="root", password="root123321", host="127.0.0.1")
+cnx = mysql.connector.connect(user="root", password="root", host="127.0.0.1")
 
 def longestHole(cursor):
     #list competitions
@@ -77,10 +77,10 @@ def mostOwnedDiscFacts():
     #present disc in view
     disc = cursor.fetchall()
     view.presentMostOwnedDisc(disc)
-                 
+
 
 def mostUsedDiscClass():
-     #fetch courses
+    #fetch courses
     try:
         cursor.execute("SELECT distinct name from disc_golf.holes;")
     except mysql.connector.Error as err:
@@ -116,7 +116,7 @@ def mostUsedDiscClass():
 
 
 # Tells what discs can be used to throw a given range
-def throwRange():
+def throwRange(cursor):
     
     userData = view.getplayerAttributes()
     classification = userData[0]
@@ -124,7 +124,7 @@ def throwRange():
     distance = userData[2]
     
     getDiscs = "SELECT name, speed,glide,turn,fade "\
-               "FROM disc_golf.discs "\
+                "FROM disc_golf.discs "\
                 "where classification = {} "\
                 "and {} >= {};.format(classification, level,range )"\
                 .format(classification, level, distance)
@@ -134,7 +134,7 @@ def throwRange():
         cursor.execute(getDiscs)
     except mysql.connector.Error as err:
         print("Something went wrong when performing query: {}".format(err))
-     
+    
     #show discs in view    
     discs = cursor.fetchall()
     view.showDiscs(discs)
@@ -186,19 +186,16 @@ def lookInsidePlayerBags(cursor):
     except mysql.connector.Error as err:
         print("Something went wrong when performing query: {}".format(err))
         
-    view.presentPlayers(cursor)
-    playerId = view.promptForPlayerId()
-    
+    playerId = view.presentPlayers(cursor)
+    if playerId ==None:   #return from method if no player id was provided
+        return
     #fetch name
     try:
         cursor.execute("SELECT name from disc_golf.players where id = {}".format(playerId))
     except mysql.connector.Error as err:
         print("Something went wrong when performing query: {}".format(err))
-        
-    playerN = cursor.fetchone()
-    if (playerN == None):   #return from method if no player id was provided
-        return
-    playerName = playerN[0]
+
+    playerName = cursor.fetchone()[0]
     
     fetchBag = "SELECT disc_name,"\
     "plastic_type,"\

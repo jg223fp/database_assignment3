@@ -9,6 +9,7 @@
 |Tested and prepared all querys in workbench    |  22-03-08          | 8h
 |Splited project in to view, controller and parser   |  22-03-08          | 2h
 |Finished querys and added them to controller.py   |  22-03-09          | 7h
+|Began writing report, edited schema   |  22-03-10          | 4h
 
     
 

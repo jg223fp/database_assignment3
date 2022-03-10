@@ -70,8 +70,8 @@ def createCompetitionResultsTable(cursor):
 				 "  `result` int," \
 				 "  `tee_pad_disc` varchar(40)," \
 				 "  `finish_disc` varchar(40)," \
-                 "  PRIMARY KEY (`name`, `year`, `player_id`,`hole`)" \
-                 ") ENGINE=InnoDB"
+                 "  PRIMARY KEY (`name`, `year`, `player_id`,`hole`)," \
+                 "  FOREIGN KEY (player_id) REFERENCES players(id) ) ENGINE=InnoDB"
     commitTable(cursor, "competition results", createCompetitionResults) 	 
 
 # Creates the table for the bags.csv file
@@ -81,7 +81,8 @@ def createBagsTable(cursor):
                  "  `disc_name` varchar(30) NOT NULL," \
                  "  `plastic_type` varchar(25) NOT NULL," \
                  "  `weigth` int NOT NULL," \
-                 "  PRIMARY KEY (`owner_id`, `disc_name`, `plastic_type`, `weigth`)" \
+                 "  PRIMARY KEY (`owner_id`, `disc_name`, `plastic_type`, `weigth`), " \
+                 "  FOREIGN KEY (disc_name) REFERENCES discs(name) "\
                  ") ENGINE=InnoDB"
     commitTable(cursor, "bags", createBags) 
 

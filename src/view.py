@@ -1,3 +1,4 @@
+from ntpath import join
 import PySimpleGUI as sg
 
 #prints main menu and prompts for a choice
@@ -70,9 +71,10 @@ def presentPlayers(cursor):
 def showBag(cursor,name):
     headings = ["Disc name","plastic","weigth(g)","speed","glide","turn","fade","classification"]
     players_arry=[]
-    for name,plastic,weigth,speed,glide,turn,fade,classification in cursor:
-        players_arry.append([name,plastic,weigth,speed,glide,turn,fade,classification])
-    players_arry_layout = [[sg.Text("{}s bag".format(name))],
+    x = name
+    for discname,plastic,weigth,speed,glide,turn,fade,classification in cursor:
+        players_arry.append([discname,plastic,weigth,speed,glide,turn,fade,classification])
+    players_arry_layout = [[sg.Text("{}s bag".format(x))],
         [sg.Table(values=players_arry, headings=headings, max_col_width=35,
                     auto_size_columns=True,
                     justification='right',
@@ -94,15 +96,12 @@ def showBag(cursor,name):
 #present competitions and returns a list with the name and year of the competition       
 def presentCompetitions(competitions):
     competitions_list = []
-    competitions_year = []
     for c in competitions:
-        competitions_list.append(c[0])
-        competitions_year.append(c[1])
-    competitions_arry_layout = [ [[sg.Text("select a competition to view the winner")],
+        competitions_list.append("{}, {}".format(c[0],c[1]))
+    competitions_arry_layout = [ [[sg.Text("select a competition and a year")],
         [sg.Listbox(values=competitions_list, size=(40, 5), select_mode='single', key='-competitionsslected-')],
-        [sg.Listbox(values=competitions_year, size=(40, 5), select_mode='single', key='-yearslected-')]],
         [sg.Button('show the winner'),sg.Exit()],
-        ]
+        ]]
     competitions_arry_window = sg.Window("Contact Information Window", 
     competitions_arry_layout, modal=True)
     event, values = competitions_arry_window.read()
@@ -110,36 +109,151 @@ def presentCompetitions(competitions):
         competitions_arry_window.close()
     elif event == 'show the winner':
         competitions_arry_window.close()
-        print([values['-competitionsslected-'][0],values['-yearslected-'][0]])
-        return [values['-competitionsslected-'][0],values['-yearslected-'][0]]
+        vals = values['-competitionsslected-'][0]
+        splittedVals = vals.split(", ")
+        print(splittedVals)
+        return splittedVals
 
 
 
 def presentWinner(winner):
-    print(winner)
+    winner = winner[0]
+    winner = list(winner)
+    winner_arry_layout =[[sg.Text("The winner name is : {}".format(winner[0]))],
+                        [sg.Text("The winner id is : {}".format(winner[1]))],
+                        [sg.Text("The winner nationality is : {}".format(winner[2]))],
+                        [sg.Text("The winner total is : {}".format(winner[3]))],
+                        [sg.Button('return to main menu')]]
+    winner_arry_window = sg.Window("The winner is", 
+    winner_arry_layout, modal=True)
+    event, values = winner_arry_window.read()
+    if event == "Exit" or event == sg.WIN_CLOSED:
+        winner_arry_window.close()
+    elif event == 'return to main menu':
+        winner_arry_window.close()
 
 # returns a list with collected data [classification,level,distance]  
 def getPlayerAttributes():
-    pass
+    classifications = [ "putt", "midrange", "fairwaydriver", "driver"]
+    Levels = ["beginner" , "advanced", "pro"]
+    # distance, any int number
+    players_arry_layout = [
+        [sg.Text("Choose a classification and a Level and enter a distance")],
+        [sg.Listbox(values=classifications, size=(40, 5), select_mode='single', key='classifications')],
+        [sg.Listbox(values=Levels, size=(40, 5), select_mode='single', key='Levels')],
+        [sg.Text("Enter a distance"), sg.Input(key='distance', do_not_clear=True, size=(10, 1))],
+        [sg.Button('show the disc'),sg.Exit()],
+        ]
+    
+    players_arry_window = sg.Window("Contact Information Window", 
+    players_arry_layout, modal=True)
+    event, values = players_arry_window.read()
+    if event == "Exit" or event == sg.WIN_CLOSED:
+        players_arry_window.close()
+    elif event == 'show the disc':
+        players_arry_window.close()
+        x = ""
+        if values['Levels'][0] == "beginner":
+            x = "average_range_beginner"
+        elif values['Levels'][0] == "advanced":
+            x = "average_range_advanced"
+        elif values['Levels'][0] == "pro":
+            x = "average_range_pro"
+        return [values['classifications'][0],x,values['distance']]
+
+    #avregae_range_beginner
+
 
 #lists the following attributes from the discs provided: name, speed, glide, turn, fade 
 def showDiscs(discs):
-    pass
+    discs_arry_layout =[[sg.Text(discs)],
+                        [sg.Button('return to main menu')]]
+    discs_arry_window = sg.Window("The discs is", 
+    discs_arry_layout, modal=True)
+    event, values = discs_arry_window.read()
+    if event == "Exit" or event == sg.WIN_CLOSED:
+        discs_arry_window.close()
+    elif event == 'return to main menu':
+        discs_arry_window.close()
 
 #lists all the courses from the provided list and return the one that the user selects
 def listCourses(courses):
-    pass
+    g = []
+    for c in courses:
+        x = ",".join(c)
+        g.append(x)
+    players_arry_layout = [
+        [sg.Text("Choose a course")],
+        [sg.Listbox(values=g, size=(40, 5), select_mode='single', key='classifications')],
+        [sg.Button('show the disc'),sg.Exit()],
+        ]
+    
+    players_arry_window = sg.Window("Contact Information Window", 
+    players_arry_layout, modal=True)
+    event, values = players_arry_window.read()
+    if event == "Exit" or event == sg.WIN_CLOSED:
+        players_arry_window.close()
+    elif event == 'show the disc':
+        players_arry_window.close()
+        return values['classifications'][0]
 
 #presents the provided disc class as the most used on tee pads for the provided course
 def presentDiscClass(course, discClass):
-    pass
+    headings = ["course", "Disc Class"]
+    valuess = []
+    valuess.append(course)
+    discClass = discClass[0]
+    print(discClass)
+    x =",".join(discClass)
+    valuess.append(x)
+    print(valuess)
+    players_arry_layout =[[sg.Text("On the course: {}".format(valuess[0]))],
+                        [sg.Text("The most used disc is : {}".format(valuess[1]))],
+        [sg.Button('return to main menu')],
+        ]
+    players_arry_window = sg.Window("Contact Information Window", 
+    players_arry_layout, modal=True)
+    event, values = players_arry_window.read()
+    if event == "Exit" or event == sg.WIN_CLOSED:
+        players_arry_window.close()
+    elif event == 'return to main menu':
+        players_arry_window.close()
+
 
 #presents all the attributes of the provided most owned disc
 def presentMostOwnedDisc(disc):
-    pass
-
+    disc = disc[0]
+    disc = list(disc)
+    players_arry_layout =[[sg.Text("The most owned disc is : {}".format(disc[0]))],
+                        [sg.Text("The disc classification is : {}".format(disc[1]))],
+                        [sg.Text("The disc speed glide is : {}".format(disc[2]))],
+                        [sg.Text("The disc glide is : {}".format(disc[3]))],
+                        [sg.Text("The disc turn is : {}".format(disc[4]))],
+                        [sg.Text("The disc fade is : {}".format(disc[5]))],
+                        [sg.Text("The disc average range for a beginner is : {}".format(disc[6]))],
+                        [sg.Text("The disc average range for a advanced is : {}".format(disc[7]))],
+                        [sg.Text("The disc average range for a pro is : {}".format(disc[8]))],
+        [sg.Button('return to main menu')],
+        ]
+    players_arry_window = sg.Window("Contact Information Window", 
+    players_arry_layout, modal=True)
+    event, values = players_arry_window.read()
+    if event == "Exit" or event == sg.WIN_CLOSED:
+        players_arry_window.close()
+    elif event == 'return to main menu':
+        players_arry_window.close()
 #present the longest hole from recived list[competition_name, year, course, hole_number,distance ]
 def showHoleInfo(hole):
-    #In the COMPETITION_NAME from YEAR played on COURSE
-    # it was HOLE_NUMBER that was the longest. It has a distance of DISTANCE
-    pass
+    hole_arry_layout =[[sg.Text("In the competition {} {}".format(hole[0], hole[1]))],
+                        [sg.Text("The longest hole was on the course {} ".format(hole[2]))],
+                        [sg.Text("The hole number was: {} ".format(hole[3]))],
+                        [sg.Text("The par of the hole was: {} ".format(hole[4]))],
+                        [sg.Text("The distance of the hole was: {} ".format(hole[5]))],
+                        [sg.Button('return to main menu')]]
+    hole_arry_window = sg.Window("The hole is", 
+    hole_arry_layout, modal=True)
+    event, values = hole_arry_window.read()
+    if event == "Exit" or event == sg.WIN_CLOSED:
+        hole_arry_window.close()
+    elif event == 'return to main menu':
+        hole_arry_window.close()

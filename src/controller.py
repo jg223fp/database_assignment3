@@ -28,11 +28,11 @@ def longestHole(cursor):
         "from disc_golf.competition_results "\
         "JOIN holes ON competition_results.course = holes.name "\
         "AND competition_results.hole = holes.hole " \
-        "AND competition_results.name  = {} "\
+        "AND competition_results.name  = '{}' "\
         "AND year = {} "\
-        "order by distance DESC"\
+        "order by distance DESC "\
         "limit 1;".format(choice[0],choice[1])
-        
+      
     #fetch longest hole in competition
     try:
         cursor.execute(getLongestHole)
@@ -43,7 +43,7 @@ def longestHole(cursor):
     #display hole in view
     view.showHoleInfo(hole)
 
-def mostOwnedDiscFacts():
+def mostOwnedDiscFacts(cursor):
     getDisc = "SELECT "\
     "name,"\
     "classification, "\
@@ -53,7 +53,7 @@ def mostOwnedDiscFacts():
     "fade, "\
     "average_range_beginner, "\
     "average_range_advanced, "\
-    "average_range_pro" \
+    "average_range_pro " \
     "FROM "\
     "disc_golf.discs "\
     "WHERE "\
@@ -65,7 +65,7 @@ def mostOwnedDiscFacts():
     "COUNT(disc_name) AS discCount "\
     "FROM "\
     "disc_golf.bags "\
-    "GROUP BY disc_name" \
+    "GROUP BY disc_name " \
     "ORDER BY discCount DESC LIMIT 1) AS mostOwned);"     
     
     #fetch disc
@@ -79,7 +79,7 @@ def mostOwnedDiscFacts():
     view.presentMostOwnedDisc(disc)
 
 
-def mostUsedDiscClass():
+def mostUsedDiscClass(cursor):
     #fetch courses
     try:
         cursor.execute("SELECT distinct name from disc_golf.holes;")
@@ -100,7 +100,7 @@ def mostUsedDiscClass():
                 "(SELECT "\
                 "tee_pad_disc, COUNT(tee_pad_disc) AS discCount "\
                 "FROM "\
-                "disc_golf.competition_results where competition_results.course = {} "\
+                "disc_golf.competition_results where competition_results.course = '{}' "\
                 "GROUP BY tee_pad_disc "\
                 "ORDER BY discCount DESC "\
                 "LIMIT 1) AS mostUsed);".format(choice)                  
@@ -118,10 +118,11 @@ def mostUsedDiscClass():
 # Tells what discs can be used to throw a given range
 def throwRange(cursor):
     
-    userData = view.getplayerAttributes()
+    userData = view.getPlayerAttributes()
+    print(userData)
     classification = userData[0]
     level = userData[1]
-    distance = userData[2]
+    distance = int(userData[2])
     
     getDiscs = "SELECT name, speed,glide,turn,fade "\
                 "FROM disc_golf.discs "\
@@ -164,11 +165,11 @@ def whoIsWinner(cursor):
             "disc_golf.competition_results "\
             "WHERE "\
             "year = {} "\
-            "AND competition_results.name = {} "\
+            "AND competition_results.name = '{}' "\
             "GROUP BY player_id "\
             "ORDER by total "\
             "LIMIT 1 )"\
-            " as winner ON players.id = winner.player_id;".format(choice[1],choice[0]) 
+            " as winner ON players.id = winner.player_id;".format(int(choice[1]),choice[0]) 
     try:
         cursor.execute(getWinner)
     except mysql.connector.Error as err:
@@ -215,7 +216,7 @@ def lookInsidePlayerBags(cursor):
         cursor.execute(fetchBag)
     except mysql.connector.Error as err:
         print("Something went wrong when performing query: {}".format(err))
-        
+       
     view.showBag(cursor,playerName)
 
 

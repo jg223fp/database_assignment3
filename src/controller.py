@@ -6,7 +6,7 @@ import view
 import parser
 
 #Connection
-cnx = mysql.connector.connect(user="root", password="root", host="127.0.0.1")
+cnx = mysql.connector.connect(user="root", password="root123321", host="127.0.0.1")
 
 def longestHole(cursor):
     #list competitions
@@ -126,9 +126,8 @@ def throwRange(cursor):
     
     getDiscs = "SELECT name, speed,glide,turn,fade "\
                 "FROM disc_golf.discs "\
-                "where classification = {} "\
-                "and {} >= {};.format(classification, level,range )"\
-                .format(classification, level, distance)
+                "where classification = '{}' "\
+                "and {} >= {};".format(classification, level, distance)
     
     #fetch Discs
     try:

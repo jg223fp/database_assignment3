@@ -198,7 +198,33 @@ def commitData(cursor, insertSql):
             cnx.commit()   # Make sure data is committed to the database
             print("Data was added")    
 
-
+#creates a view with restrictions in the db. This view leaves the player level out.
+def createView(cursor):
+    print("Creating view in db.")
+    command = "CREATE VIEW disc_golf.playerinfo AS "\
+              "SELECT id, name, nationality "\
+              "FROM "\
+              "players;"
+    
+    try:
+        cursor.execute(command)
+    except mysql.connector.Error as err:
+        print("Something went wrong when performing query: {}".format(err))
+    
+    #test view
+    command = "SELECT * FROM playerinfo"
+    try:
+        cursor.execute(command)
+    except mysql.connector.Error as err:
+        print("Something went wrong when performing query: {}".format(err))
+    
+    obj = cursor.fetchone()
+    
+    if obj != None:
+        print("The view \"playerinfo\" was sucessfully created.")
+    else:
+        print("Error when creating view")          
+    
  
 
 def parserBoot(recivedCNX, cursor):
@@ -333,6 +359,6 @@ def parserBoot(recivedCNX, cursor):
                 print("There is data in the table")
         except mysql.connector.Error as err:
             print("Something went wrong when performing query: {}".format(err))
-            
-    return cursor
+        
+        createView(cursor)
 

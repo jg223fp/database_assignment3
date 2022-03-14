@@ -134,7 +134,7 @@ def presentWinner(winner):
 
 # returns a list with collected data [classification,level,distance]  
 def getPlayerAttributes():
-    classifications = [ "putt", "midrange", "fairwaydriver", "driver"]
+    classifications = [ "putt", "midrange", "fairway driver", "driver"]
     Levels = ["beginner" , "advanced", "pro"]
     # distance, any int number
     players_arry_layout = [
@@ -166,8 +166,18 @@ def getPlayerAttributes():
 
 #lists the following attributes from the discs provided: name, speed, glide, turn, fade 
 def showDiscs(discs):
-    discs_arry_layout =[[sg.Text(discs)],
-                        [sg.Button('return to main menu')]]
+    headings = ['name','speed','glide','turn','fade']
+    pting = []
+    for i in discs:
+        pting.append(i)
+    discs_arry_layout =[[sg.Table(values=pting, headings=headings, max_col_width=35,
+                    auto_size_columns=True,
+                    justification='right',
+                    num_rows=10,
+                    key='-TABLE-',
+                    row_height=35,
+                    tooltip='Reservations Table')],
+                    [sg.Button('return to main menu')]]
     discs_arry_window = sg.Window("The discs is", 
     discs_arry_layout, modal=True)
     event, values = discs_arry_window.read()

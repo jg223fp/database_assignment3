@@ -6,10 +6,10 @@ import view
 import parser
 
 #Connection
-cnx = mysql.connector.connect(user="root", password="root123321", host="127.0.0.1")
+cnx = mysql.connector.connect(user="root", password="root", host="127.0.0.1")
 
 def longestHole(cursor):
-    #list competitions
+    #list competitions21
     try:
         cursor.execute("SELECT DISTINCT name, year FROM disc_golf.competition_results;")
     except mysql.connector.Error as err:

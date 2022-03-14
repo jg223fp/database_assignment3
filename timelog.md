@@ -11,6 +11,7 @@
 |Finished querys and added them to controller.py   |  22-03-09          | 7h
 |Began writing report, edited schema   |  22-03-10          | 4h
 
+
     
 
 

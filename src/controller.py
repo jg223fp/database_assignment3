@@ -117,9 +117,7 @@ def mostUsedDiscClass(cursor):
 
 # Tells what discs can be used to throw a given range
 def throwRange(cursor):
-    
     userData = view.getPlayerAttributes()
-    print(userData)
     classification = userData[0]
     level = userData[1]
     distance = int(userData[2])

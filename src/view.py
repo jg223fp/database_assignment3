@@ -111,7 +111,6 @@ def presentCompetitions(competitions):
         competitions_arry_window.close()
         vals = values['-competitionsslected-'][0]
         splittedVals = vals.split(", ")
-        print(splittedVals)
         return splittedVals
 
 

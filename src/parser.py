@@ -202,28 +202,21 @@ def commitData(cursor, insertSql):
 def createView(cursor):
     print("Creating view in db.")
     command = "CREATE VIEW disc_golf.playerinfo AS "\
-              "SELECT id, name, nationality "\
+              "SELECT id, name, level, nationality "\
               "FROM "\
               "players;"
     
     try:
         cursor.execute(command)
-    except mysql.connector.Error as err:
-        print("Something went wrong when performing query: {}".format(err))
-    
-    #test view
-    command = "SELECT * FROM playerinfo"
-    try:
-        cursor.execute(command)
-    except mysql.connector.Error as err:
-        print("Something went wrong when performing query: {}".format(err))
-    
-    obj = cursor.fetchone()
-    
-    if obj != None:
-        print("The view \"playerinfo\" was sucessfully created.")
-    else:
-        print("Error when creating view")          
+    except mysql.connector.Error as err:  
+        if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
+            print("already exists.")
+            return
+        else:
+            print("Something went wrong when performing query: {}".format(err))
+            return
+        
+    print("The view \"playerinfo\" was sucessfully created.")        
     
  
 
@@ -259,6 +252,7 @@ def parserBoot(recivedCNX, cursor):
             createHolesTable(cursor)
             createCompetitionResultsTable(cursor)
             createBagsTable(cursor)
+            createView(cursor)
             tablesExists = True
             addPlayers(cursor,PLAYERS)
             addDiscs(cursor,DISCS)

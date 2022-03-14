@@ -182,7 +182,7 @@ def whoIsWinner(cursor):
 def lookInsidePlayerBags(cursor):
     #list players
     try:
-        cursor.execute("SELECT * from disc_golf.players;")
+        cursor.execute("SELECT * from playerinfo;")
     except mysql.connector.Error as err:
         print("Something went wrong when performing query: {}".format(err))
         

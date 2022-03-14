@@ -1,6 +1,8 @@
 from ntpath import join
 import PySimpleGUI as sg
 
+sg.theme("DarkPurple6")
+
 #prints main menu and prompts for a choice
 def printMenu():
     layout = [[sg.Text("Choose one option:")],     # Part 2 - The Layout
@@ -58,6 +60,7 @@ def presentPlayers(cursor):
         [sg.Listbox(values=player_ids, size=(40, 5), select_mode='single', key='-playeslected-')],
         [sg.Button('show the bag'),sg.Exit()],
         ]
+    
     players_arry_window = sg.Window("Contact Information Window", 
     players_arry_layout, modal=True)
     event, values = players_arry_window.read()

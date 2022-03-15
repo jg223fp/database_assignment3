@@ -25,6 +25,12 @@ To install them run the command "pip install Example" replacing "Example" with t
 
 </BR>
 
+### Build database:
+- Option 1: Open the database_installation_script.sql inside MySQL workbench and run it.
+- Option 2: There is a parser included in the source code whitch will build the database automaticlly.
+
+</BR>
+
 ### To run the program:
    - Open controller.py and edit line 9 to your own MySQL server details.
    
